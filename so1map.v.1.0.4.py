@@ -1,5 +1,6 @@
 from queue import Queue
 import threading, datetime, time, json, csv, argparse, ipaddress, socket, re, sys
+from colorama import Fore
 
 ip = ''
 port_queue = Queue()
@@ -33,7 +34,7 @@ def scan_sub():
             sock.settimeout(0.5)
             sock.connect((ip, port))
             if not quiet:
-                print(f'{ip}\t{port}\topen')
+                print(f'{ip}\t{port}\t{Fore.GREEN}open{Fore.WHITE}')
             if file_format == 'json-clean':
                 data = {
                     'ip':ip,
@@ -94,7 +95,7 @@ def main():
     parser.add_argument('-t', '--threads', help='the worker amount, be careful not to overwhelm your pc use catiously, default is 100', default=100)
     parser.add_argument('-f', '--file_type', choices=['csv', 'json', 'json-clean', 'txt'], help='output results to various file formats.', default='no')
     parser.add_argument('-o', '--output', help='filename & location (scan.txt or ~/Documents/scan.csv)')
-    parser.add_argument('--quiet', help='supress terminal output and just save to file', action='store_true')
+    parser.add_argument('--quiet', help='supresses terminal output', action='store_true')
     args = parser.parse_args()
     quiet = args.quiet
 
@@ -177,7 +178,7 @@ def main():
         for ip in open_ports:
             for port in open_ports[ip]:
                 if not args.quiet:
-                    print(f'{port}\topen')
+                    print(f'{port}\t{Fore.GREEN}open{Fore.WHITE}')
         end = time.time()
         print()
         if not args.quiet:
