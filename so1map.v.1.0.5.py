@@ -7,7 +7,7 @@ port_queue = Queue()
 open_ports = {}
 results = []
 
-def scan():
+def scan(ip):
     while not port_queue.empty():
         port = port_queue.get()
         try:
@@ -26,7 +26,7 @@ def scan():
             sock.close()
             port_queue.task_done()
 
-def scan_sub():
+def scan_sub(ip, quiet):
     while not port_queue.empty():
         port = port_queue.get()
         try:
@@ -87,8 +87,6 @@ def write_file(data):
             file.write(data)
 
 def main():
-    global ip
-    global quiet
     parser = argparse.ArgumentParser()
     parser.add_argument('-ip', '--ipaddress', help='can be a single ip or a subnet (8.8.8.8 or 36.0.0.0/8).', required=True)
     parser.add_argument('-p', '--port', help='the port range goes from 1 to whatver you type, default is 1024.', default=1024)
@@ -134,7 +132,7 @@ def main():
                 thread_count = int(args.threads)
 
                 for _ in range(thread_count):
-                    t = threading.Thread(target=scan_sub)
+                    t = threading.Thread(target=scan_sub, args=(ip, quiet))
                     t.daemon = True
                     t.start()
 
@@ -168,7 +166,7 @@ def main():
         thread_count = int(args.threads)
 
         for _ in range(thread_count):
-            t = threading.Thread(target=scan)
+            t = threading.Thread(target=scan, args=(ip,))
             t.daemon = True
             t.start()
 
